@@ -23,3 +23,4 @@ BASE_EXTERNAL_DATA_DIR = path.join(BASE_DATA_DIR, 'external')
 
 # artifact dirs
 BASE_ARTIFACTS_DIR = path.abspath(ENV_VARS['ARTIFACTS_DIR'])
+HUGGING_FACE_CACHE_DIR = path.join(BASE_ARTIFACTS_DIR, 'hugging_face_cache')

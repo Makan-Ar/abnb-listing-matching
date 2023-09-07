@@ -7,6 +7,8 @@ scikit-learn
 python-dotenv
 tqdm
 
+transformers
+
 # notebooks
 notebook
 jupyterlab

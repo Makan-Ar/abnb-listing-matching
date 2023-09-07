@@ -1,7 +1,7 @@
 Airbnb Listing Matching
 ==============================
 
-A web service that matches Airbnb listings to the most similar listings in the area in NYC. Given a listing id, returns similar listings from different neighborhoods.
+A toy web service that matches Airbnb listings to the most similar listings in the area in NYC. Given a listing id, returns similar listings from different neighborhoods.
 
 Data source: http://insideairbnb.com/get-the-data/
 
