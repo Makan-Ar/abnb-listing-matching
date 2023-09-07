@@ -1,31 +1,58 @@
+import os
+import sys
+from os import path
+sys.path.append(os.path.abspath(path.join(os.getcwd(), os.pardir)))
+
 import re
-from typing import Dict
+import json
+import project_config as pc
+from typing import Dict, Any, Hashable
 
 class Listing:
+    """ A class to represent a listing on Airbnb
+    """
     def __init__(
         self, 
         id: int,
         properties: Dict
     ) -> None:
+        """ 
+        initializes a listing object.
+        `properties` must include the following keys:
+            - `listing_url` (str)
+            - `price` (float)
+            - `latitude` (float)
+            - `longitude` (float)
+            - `room_type` (str)
+            - `neighbourhood_group_cleansed` (str)
+            - `neighbourhood_cleansed` (str)
+            - `amenities` (list[str], optional)
+            
+        Args:
+            id (int): listing id
+            properties (Dict): dictionary of properties
+        """
+        assert 'listing_url' in properties, '`listing_url` must be specified'
         assert 'price' in properties and isinstance(properties['price'], float), '`price` must be specified as a float'
         assert 'latitude' in properties, '`latitude` must be specified'
         assert 'longitude' in properties, '`longitude` must be specified'
         assert 'room_type' in properties, '`room_type` must be specified'
         assert 'neighbourhood_group_cleansed' in properties, '`neighbourhood_group_cleansed` must be specified'
         assert 'neighbourhood_cleansed' in properties, '`neighbourhood_cleansed` must be specified'
-        assert 'amenities' not in properties or isinstance(self.properties['amenities'], list), '`amenities` must be a list'
+        assert 'amenities' not in properties or isinstance(properties['amenities'], list), '`amenities` must be a list'
     
         self.id = id
         self.properties = properties
     
-    def add_property(self, key: str, value: str) -> None:
+    def add_property(self, key: Hashable, value: Any) -> None:
         """ adds a property to the listing
 
         Args:
-            key (str): property name
-            value (str): property value
+            key (Hashable): property key
+            value (Any): property value
         """
         self.properties[key] = value
+        return
 
     def get_info_summary(self) -> str:
         """ returns a summary of the listing in natural language.
@@ -71,7 +98,6 @@ class Listing:
         summary = '. '.join(summary)
 
         self.add_property('info_summary', summary)
-
         return summary
     
     def get_full_host_description(self) -> str:
@@ -92,15 +118,15 @@ class Listing:
         
         if self.properties.get('property_type', None):
             property_type = f'This is a'
-            property_type += 'n' if self.properties[property_type][0].lower() in 'aeiou' else ''
-            property_type += ' ' + self.properties[property_type].lower()
+            property_type += 'n' if self.properties['property_type'][0].lower() in 'aeiou' else ''
+            property_type += ' ' + self.properties['property_type'].lower()
             summary.append(property_type)
 
         if self.properties.get('description', None):
             summary.append(clean_html(self.properties['description']))
         
         if self.properties.get('amenities', None):
-            amenities = 'Amenities include: ' + self.properties['amenities'].join(', ').lower()
+            amenities = 'Amenities include: ' + ', '.join(self.properties['amenities']).lower()
             summary.append(amenities)
         
         if self.properties.get('neighborhood_overview', None):
@@ -121,3 +147,16 @@ class Listing:
         
         self.add_property('full_host_description', summary)
         return summary
+
+    def store(self):
+        """stores the listing as a json file in the database directory.
+           excludes `full_host_description` and `info_summary` from the json file if they exist.
+        """
+        properties_to_exclue = ['full_host_description', 'info_summary']
+        store_exclue = {pte: self.properties.pop(pte) for pte in properties_to_exclue if pte in self.properties}
+
+        with open(path.join(pc.DATABASE_DIR, f'{self.id}.json'), 'w') as f:
+            json.dump(self.properties, f)
+
+        self.properties.update(store_exclue)
+        return

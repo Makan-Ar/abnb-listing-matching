@@ -20,6 +20,7 @@ BASE_RAW_DATA_DIR = path.join(BASE_DATA_DIR, 'raw')
 BASE_INTERIM_DATA_DIR = path.join(BASE_DATA_DIR, 'interim')
 BASE_PROCESSED_DATA_DIR = path.join(BASE_DATA_DIR, 'processed')
 BASE_EXTERNAL_DATA_DIR = path.join(BASE_DATA_DIR, 'external')
+DATABASE_DIR = path.join(BASE_DATA_DIR, 'processed')
 
 # artifact dirs
 BASE_ARTIFACTS_DIR = path.abspath(ENV_VARS['ARTIFACTS_DIR'])
