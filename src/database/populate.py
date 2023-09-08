@@ -60,7 +60,6 @@ def filter_by_distance(
     for _, row in cur_df.iterrows():
         this_loc = (row.latitude, row.longitude)
         dist = haversine(cur_loc, this_loc, unit='mi')
-        print(dist, row.id)
         if dist > ListingSimilarity.MIN_DISTANCE:
             matching_ids.append(row.id)
             if len(matching_ids) == ListingSimilarity.TOP_N:
