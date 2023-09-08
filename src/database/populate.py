@@ -70,7 +70,6 @@ def precompute_and_populate(
     """
     # load data
     df = du.load_nyc_listings()
-    df = df.iloc[:1000]
 
     print('Compute all listings embeddings...')
     listing_embedder = ListingEmbedder(device=device)
@@ -111,4 +110,4 @@ def populate_db(
     return
 
 if __name__ == '__main__':
-    precompute_and_populate(device='cuda:0', batch_size=250)
+    precompute_and_populate(device='cuda:0', batch_size=400)
