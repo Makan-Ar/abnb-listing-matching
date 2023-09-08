@@ -14,7 +14,15 @@ from transformers import AutoTokenizer, AutoModel
 
 
 class ListingEmbedder:
-    """ A class to embed listings using BGE-large-en model from HuggingFace """
+    """ A class to embed listings using BGE-large-en model from HuggingFace 
+        (https://huggingface.co/BAAI/bge-large-en)
+
+        Constructs 2 natural language summaries for each listing:
+            1. info summary: a summary of the listing's information (e.g. room type, price, etc.)
+            2. full host description: a full description by the host (e.g. property type, description, etc.)
+        
+        The embeddings are the weighted average of the embeddings of the two summaries.
+    """
 
     INFO_SUM_COEF = 3
     FULL_HOST_DESC_COEF = 2
