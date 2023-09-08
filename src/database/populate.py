@@ -87,6 +87,22 @@ def apply_heuristic_filters(
     return scores
 
 
+def populate_db(
+    df: pd.DataFrame, 
+    db: Database
+) -> None:
+    """ populates the database with listings from the dataframe """
+    listings = list(df.T.to_dict().values())
+    for listing in listings:
+        for key, val in listing.items():
+            if pd.isna(val):
+                listing[key] = None
+
+    cols = list(listings[0].keys())
+    db.executemany(f'INSERT INTO listing ({", ".join(cols)}) VALUES (:{", :".join(cols)});', listings)
+    return
+
+
 def precompute_and_populate(
     device: str, 
     batch_size: int
@@ -107,7 +123,7 @@ def precompute_and_populate(
     print('Find similar listings and apply heuristic filters...')
     cos_similarities = embeddings @ embeddings.T
     cos_similarities = apply_heuristic_filters(cos_similarities, df)
-    top_n_similar = np.argsort(cos_similarities, axis=1)[:, -ListingSimilarity.TOP_N * 3:]
+    top_n_similar = np.argsort(cos_similarities, axis=1)[:, -ListingSimilarity.TOP_N * 10:]
     top_n_similar = top_n_similar[:, ::-1]
 
     # add embeddings to dataframe
@@ -123,21 +139,6 @@ def precompute_and_populate(
         populate_db(df.iloc[i:i+batch_size], db)
     db.close()
 
-
-def populate_db(
-    df: pd.DataFrame, 
-    db: Database
-) -> None:
-    """ populates the database with listings from the dataframe """
-    listings = list(df.T.to_dict().values())
-    for listing in listings:
-        for key, val in listing.items():
-            if pd.isna(val):
-                listing[key] = None
-
-    cols = list(listings[0].keys())
-    db.executemany(f'INSERT INTO listing ({", ".join(cols)}) VALUES (:{", :".join(cols)});', listings)
-    return
 
 if __name__ == '__main__':
     precompute_and_populate(device='cuda:0', batch_size=400)
