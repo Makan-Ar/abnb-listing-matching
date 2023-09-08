@@ -67,7 +67,6 @@ def load_nyc_listings() -> pd.DataFrame:
 
 def populate_db(df):
     """ populates the database with listings from the dataframe """
-    db_setup()
     print('Populating database with listings...')
 
     db = Database()
