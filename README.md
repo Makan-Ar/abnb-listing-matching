@@ -82,26 +82,17 @@ API_PORT = <port-for-fast-api>
 ```
 
 ### `project_config.py`
-The `project_config.py` will automatically load the `.env` file and expose all of its variables + additional variables based on the directory structures of the `data` and `artifacts` directories listed above. In your code, you can load the `project_config.py` and access the variables like so:
+The `project_config.py` will automatically load the `.env` file and expose all of its variables + additional variables based on the directory structures of the `data` and `artifacts` directories listed above.
 
-```
-import os
-import sys
-sys.path.append(os.path.abspath(<relative-path-to-project-directory>))
 
-from src import project_config as pc
-
-project_config.ENV_VARS['CODE_DIR']
-project_config.BASE_DATA_DIR
-```
 
 `Initial setup`
 ------------
 1. Create a `.env` file under the `src` directory (see above)
 2. Install the required packages: `pip install -r requirements.txt`
-3. Populate the sqlite database with the data: `python src/data/make_dataset.py`
+3. Populate the sqlite database with the data: `cd src/data/; python make_dataset.py`
    -   This will create a sqlite database under the `data` directory. It may take several minutes to complete.
-4. Start the web service: `python src/web_service/api.py` or alternatively `uvicorn src.web_service.api:app --reload --port <API_PORT>`
+4. Start the web service: `cd src/web_service/; python api.py` or alternatively `cd src/web_service/; uvicorn api:app --reload --port <API_PORT>`
    -   This will start the web service on the port specified in the `.env` file. 
    -   You can test the web service by going to `http://localhost:<API_PORT>/docs` in your browser. 
    - Web service documentation is available: `http://localhost:<API_PORT>/redoc`
