@@ -48,7 +48,11 @@ async def get_similar_listings(
         raise HTTPException(status_code=404, detail="Listing not found")
 
     similar_listings = Listing.retrieve_by_ids(listing.properties['similar_listings'], db)
+    if similar_listings is None:
+        return []
+    
     return [listing.to_listing_item() for listing in similar_listings]
+
 
 if __name__ == "__main__":
     import uvicorn
