@@ -7,8 +7,6 @@ Data source: http://insideairbnb.com/get-the-data/
 
 Requires Python 3.10+
 
-Please keep in mind that data, model, and simulation artifacts are not stored on Git due to their larger size. They are stored in separete directories and referenced using the `src/.env` file.
-
 Project Organization
 ------------
    **Code directory**

@@ -1,17 +1,16 @@
 # generic packages
-numpy
-matplotlib
-pandas
-openpyxl
-scikit-learn
-python-dotenv
-tqdm
+numpy==1.22.2
+matplotlib==3.7.2
+pandas==1.5.2
+openpyxl==3.1.2
+python-dotenv==1.0.0
+tqdm==4.65.0
 haversine==2.8.0
 fastapi==0.103.1
 uvicorn[standard]==0.23.2
 
-transformers
+transformers==4.33.1
 
 # notebooks
-notebook
-jupyterlab
+notebook==6.4.10
+jupyterlab==2.3.2
