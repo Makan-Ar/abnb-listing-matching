@@ -43,25 +43,21 @@ Project Organization
             └──  models             <- Scripts to define + train models and then use trained 
                                        models to make predictions                      
 
-         
    
    **Data directory**
 
-   Must be created separate from this repo. Not version controlled as of now. Referenced in `src/.env`.
+   Separate from this repo. Referenced in `src/.env`. Will be automatically created as needed. Not version controlled as of now. 
 
       ├── data
-         ├── external       <- Data from third party sources.
-         ├── interim        <- Intermediate data that has been transformed.
-         ├── processed      <- The final, canonical data sets for modeling.
          └── raw            <- The original, immutable data dump.
       
    
    **Artifacts directory**
 
-   Must be created separate from this repo. Not version controlled as of now. Referenced in `src/.env`.
+   Separate from this repo. Referenced in `src/.env`. Will be automatically created as needed. Not version controlled as of now. 
 
       ├── artifacts
-         ├── simulations    <- simulation results and outputs
+         ├── hugging_face_cache    <- simulation results and outputs
          └── models         <- Trained and serialized models, model predictions, or
                                  model summaries
 --------
