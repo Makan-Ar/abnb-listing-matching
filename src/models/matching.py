@@ -20,6 +20,7 @@ class ListingSimilarity:
     MAX_LOG_PRICE_DIFF = 0.3
     MIN_COS_SIMILARITY = 0.9
     TOP_N = 10
+    MIN_DISTANCE = 1.0  # in miles
     
     def _retrieve_filtered_listings(self, reference_listing: Listing) -> List[Listing]:
         # TODO: SQL query to retrieve filtered listings based on heuristic filters

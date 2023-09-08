@@ -7,9 +7,11 @@ import pandas as pd
 from os import path
 from tqdm import tqdm
 from data import utils as du
+from haversine import haversine
 from database.db import Database, db_setup
 from models.matching import ListingSimilarity
 from models.listing_embedding import ListingEmbedder
+from typing import List
 
 def filter_by_price(df: pd.DataFrame) -> np.ndarray:
     """ filter by price abs(log10(price) - log10(reference_price)) <= self.MAX_LOG_PRICE_DIFF
@@ -37,6 +39,34 @@ def filter_by_neighborhood(df: pd.DataFrame) -> np.ndarray:
     """
     neighbourhoods = df.neighbourhood_cleansed.to_numpy()
     return neighbourhoods[:, None] != neighbourhoods
+
+
+def filter_by_distance(
+    cur_row, 
+    cur_df: pd.DataFrame
+) -> List[int]:
+    """ filter by distance
+
+    Args:
+        cur_row (pd.Series): current row
+        df (pd.DataFrame): a subset of matching rows
+
+    Returns:
+        List[int]: list of ids outside of the distance threshold
+    """
+    cur_loc = (cur_row.latitude, cur_row.longitude)
+
+    matching_ids = []
+    for _, row in cur_df.iterrows():
+        this_loc = (row.latitude, row.longitude)
+        dist = haversine(cur_loc, this_loc, unit='mi')
+        print(dist, row.id)
+        if dist > ListingSimilarity.MIN_DISTANCE:
+            matching_ids.append(row.id)
+            if len(matching_ids) == ListingSimilarity.TOP_N:
+                break
+    
+    return matching_ids
 
 
 def apply_heuristic_filters(
@@ -78,13 +108,14 @@ def precompute_and_populate(
     print('Find similar listings and apply heuristic filters...')
     cos_similarities = embeddings @ embeddings.T
     cos_similarities = apply_heuristic_filters(cos_similarities, df)
-    top_n_similar = np.argsort(cos_similarities, axis=1)[:, -ListingSimilarity.TOP_N:]
+    top_n_similar = np.argsort(cos_similarities, axis=1)[:, -ListingSimilarity.TOP_N * 3:]
     top_n_similar = top_n_similar[:, ::-1]
 
     # add embeddings to dataframe
     df['embedding'] = df.apply(lambda row: pickle.dumps(embeddings[row.name].tolist()), axis=1)
     df['similar_listings'] = df.apply(lambda row: pickle.dumps(df.iloc[top_n_similar[row.name]].id.tolist()), axis=1)
-    
+    df['similar_listings'] = df.apply(lambda row: pickle.dumps(filter_by_distance(row, df.iloc[top_n_similar[row.name]])), axis=1)
+
     # populate database
     db_setup()
     print('Populating database with listings and precomputed embeddings...')
