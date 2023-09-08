@@ -11,7 +11,8 @@ from typing import List
 class ListingSimilarity:
     MAX_LOG_PRICE_DIFF = 0.3
     MIN_COS_SIMILARITY = 0.9
-
+    TOP_N = 10
+    
     def __init__(
         self,
         cache: bool = False

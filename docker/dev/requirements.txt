@@ -6,6 +6,7 @@ openpyxl
 scikit-learn
 python-dotenv
 tqdm
+haversine==2.8.0
 
 transformers
 

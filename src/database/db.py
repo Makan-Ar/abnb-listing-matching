@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 import sqlite3
 from os import path
 import project_config as pc
+from data import utils as du
 from typing import Dict, List, Tuple
 
 class Database:
@@ -18,8 +19,16 @@ class Database:
         self.connection = None
         self.cursor = None
     
+    @staticmethod
+    def dict_factory(cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+
     def connect(self) -> None:
         self.connection = sqlite3.connect(self.db_name)
+        self.connection.row_factory = Database.dict_factory
         self.cursor = self.connection.cursor()
     
     def close(self) -> None:
@@ -39,6 +48,17 @@ class Database:
             self.cursor.execute(query)
         return
 
+    def executemany(
+        self, 
+        query: str, 
+        params: List
+    ) -> None:
+        if not self.connection:
+            self.connect()
+        self.cursor.executemany(query, params)
+        self.connection.commit()
+        return
+    
     def execute(
         self, 
         query: str, 
@@ -46,6 +66,7 @@ class Database:
     ) -> None:
         self.__execute(query, params)
         self.connection.commit()
+        return
         
     def fetch_all(
         self, 
@@ -84,26 +105,7 @@ def db_setup():
     print('Setting up database for the first time...')
 
     db = Database()
-    db.execute('''
-        CREATE TABLE IF NOT EXISTS listing (
-            id INTEGER PRIMARY KEY,
-            listing_url TEXT NOT NULL,
-            room_type TEXT NOT NULL,
-            neighbourhood_group_cleansed TEXT NOT NULL,
-            neighbourhood_cleansed TEXT NOT NULL,
-            bedrooms INTEGER NOT NULL,
-            beds INTEGER,
-            bathrooms_text TEXT,
-            accommodates INTEGER,
-            price REAL NOT NULL,
-            latitude REAL NOT NULL,
-            longitude REAL NOT NULL,
-            property_type TEXT,
-            description TEXT,
-            neighborhood_overview TEXT,
-            host_about TEXT
-        )
-    ''')
+    db.execute(f'CREATE TABLE IF NOT EXISTS listing ({du.LISTING_TABLE_SCHEMA})')
     db.close()
 
 

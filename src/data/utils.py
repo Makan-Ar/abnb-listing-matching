@@ -4,10 +4,8 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 from os import path
 import pandas as pd
 import urllib.request
-from tqdm import tqdm
 import project_config as pc
-from models.listing import Listing
-from database.database import Database, db_setup
+
 
 NYC_LISTINGS_URL = 'http://data.insideairbnb.com/united-states/ny/new-york-city/2023-06-05/data/listings.csv.gz'
 NYC_LISTING_LOCAL_PATH = path.join(pc.BASE_RAW_DATA_DIR, 'nyc_listings.csv.gz')
@@ -18,9 +16,9 @@ COLS_TO_KEEP = [
     'room_type',
     'neighbourhood_group_cleansed',
     'neighbourhood_cleansed',
-    'bathrooms_text',
     'bedrooms',
     'beds',
+    'bathrooms_text',
     'accommodates',
     'price',
     'latitude',
@@ -30,6 +28,27 @@ COLS_TO_KEEP = [
     'neighborhood_overview',
     'host_about'
 ]
+
+LISTING_TABLE_SCHEMA = ('''
+    id INTEGER PRIMARY KEY,
+    listing_url TEXT NOT NULL,
+    room_type TEXT NOT NULL,
+    neighbourhood_group_cleansed TEXT NOT NULL,
+    neighbourhood_cleansed TEXT NOT NULL,
+    bedrooms INTEGER NOT NULL,
+    beds INTEGER,
+    bathrooms_text TEXT,
+    accommodates INTEGER,
+    price REAL NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    property_type TEXT,
+    description TEXT,
+    neighborhood_overview TEXT,
+    host_about TEXT,
+    embedding BLOB,
+    similar_listings BLOB
+''')
 
 def load_listings(listing_url: str) -> pd.DataFrame:
     """ loads listings from a url and returns a dataframe with the relevant columns
@@ -65,21 +84,6 @@ def load_nyc_listings() -> pd.DataFrame:
         urllib.request.urlretrieve(NYC_LISTINGS_URL, NYC_LISTING_LOCAL_PATH)
     return load_listings(NYC_LISTING_LOCAL_PATH)
 
-def populate_db(df):
-    """ populates the database with listings from the dataframe """
-    print('Populating database with listings...')
-
-    db = Database()
-    for _, row in tqdm(df.iterrows()):
-        listing_dict = row.to_dict()
-        for key in listing_dict:
-            if not isinstance(listing_dict[key], list) and pd.isna(listing_dict[key]):
-                listing_dict[key] = None
-
-        listing = Listing(listing_dict.pop('id'), listing_dict)
-        listing.store(db)
-    return
 
 if __name__ == '__main__':
     df = load_nyc_listings()
-    populate_db(df)
