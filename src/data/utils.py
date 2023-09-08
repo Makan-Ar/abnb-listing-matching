@@ -45,7 +45,11 @@ def load_listings(listing_url: str) -> pd.DataFrame:
     data_df = data_df[COLS_TO_KEEP]
 
     data_df.price = data_df.price.str.replace('$', '', regex=False).str.replace(',', '', regex=False).astype(float)
+
+    # no room number means either a studio or a shared room
+    data_df.bedrooms.fillna(0, inplace=True)
     data_df.bedrooms = data_df.bedrooms.astype('Int64')
+
     data_df.beds = data_df.beds.astype('Int64')
     data_df.accommodates = data_df.accommodates.astype('Int64')
 

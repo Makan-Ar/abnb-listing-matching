@@ -93,7 +93,7 @@ class ListingEmbedder:
         room_type: str,
         neighbourhood_group_cleansed: str,
         price: float,
-        bedrooms: int=None,
+        bedrooms: int,
         beds: int=None,
         bathrooms_text: str=None,
         accommodates: int=None,
@@ -104,7 +104,7 @@ class ListingEmbedder:
             room_type (str): listing room type
             neighbourhood_group_cleansed (str): listing neighbourhood group
             price (float): listing price
-            bedrooms (int, optional): listing's number of bedrooms. Defaults to None.
+            bedrooms (int): listing's number of bedrooms. Defaults to None.
             beds (int, optional): listing's number of beds. Defaults to None.
             bathrooms_text (str, optional): listing's number of bathrooms. Defaults to None.
             accommodates (int, optional): number of people the listing can accomodate. Defaults to None.
@@ -118,11 +118,13 @@ class ListingEmbedder:
         
         # bed and bath info
         bed_bath = ''
-        if bedrooms:
-            bed_bath = f'{bedrooms} bedroom' + 's' if bedrooms > 1 else ''
-        if beds:
+        if bedrooms == 0 and room_type == 'Entire home/apt':
+            bed_bath = 'A studio'
+        elif bedrooms > 0:
+            bed_bath = f'{bedrooms} bedroom{"s" if bedrooms > 1 else ""}'
+        if beds is not None and beds > 0:
             bed_bath += ' with ' if bed_bath != '' else ''
-            bed_bath += f'{beds} bed' + 's' if beds > 1 else ''
+            bed_bath += f'{beds} bed{"s" if beds > 1 else ""}'
         if bathrooms_text:
             bed_bath += ' and ' if bed_bath != '' else ''
             bed_bath += bathrooms_text
