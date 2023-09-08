@@ -98,7 +98,35 @@ class Listing:
             db.close()
         
         if not rows:
-            return None
+            return []
+        
+        return [Listing.__from_db_dict(row) for row in rows]
+
+    @staticmethod
+    def retrieve_all(
+        skip: int=0, 
+        limit: int=10, 
+        db: Database=None
+    ) -> List['Listing']:
+        """ retrieves all listings
+
+        Args:
+            skip (int, optional): number of listings to skip. Defaults to 0.
+            limit (int, optional): number of listings to return. Defaults to 10.
+            db (Database, optional): database object. If None, a new 
+                connection will be opened. Defaults to None.
+
+        Returns:
+            List[Listing]: list of listing objects
+        """
+        if not db:
+            db = Database()
+        rows = db.fetch_all(f'SELECT * FROM listing LIMIT {limit} OFFSET {skip}')
+        if not db:
+            db.close()
+        
+        if not rows:
+            return []
         
         return [Listing.__from_db_dict(row) for row in rows]
 
