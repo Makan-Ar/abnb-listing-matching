@@ -1,10 +1,9 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 
-import json
 import pickle
 import project_config as pc
-from database.db import Database
+from data.database import Database
 from data.utils import ListingItem
 from typing import Dict, Any, Hashable, List
 

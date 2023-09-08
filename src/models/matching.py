@@ -2,8 +2,8 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 
-from models.listing import Listing
 from typing import List
+from models.listing import Listing
 
 class ListingSimilarity:
     """ A class to represent a listing similarity model

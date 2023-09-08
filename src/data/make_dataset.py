@@ -1,17 +1,19 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 
+import torch
 import pickle
 import numpy as np
 import pandas as pd
 from os import path
 from tqdm import tqdm
+from typing import List
 from data import utils as du
 from haversine import haversine
-from database.db import Database, db_setup
+from data.database import Database, db_setup
 from models.matching import ListingSimilarity
 from models.listing_embedding import ListingEmbedder
-from typing import List
+
 
 def filter_by_price(df: pd.DataFrame) -> np.ndarray:
     """ filter by price abs(log10(price) - log10(reference_price)) <= self.MAX_LOG_PRICE_DIFF
@@ -103,7 +105,7 @@ def populate_db(
     return
 
 
-def precompute_and_populate(
+def precompute_and_make_db(
     device: str, 
     batch_size: int
 ) -> None:
@@ -126,9 +128,8 @@ def precompute_and_populate(
     top_n_similar = np.argsort(cos_similarities, axis=1)[:, -ListingSimilarity.TOP_N * 10:]
     top_n_similar = top_n_similar[:, ::-1]
 
-    # add embeddings to dataframe
+    # serialize and add embeddings to dataframe
     df['embedding'] = df.apply(lambda row: pickle.dumps(embeddings[row.name].tolist()), axis=1)
-    df['similar_listings'] = df.apply(lambda row: pickle.dumps(df.iloc[top_n_similar[row.name]].id.tolist()), axis=1)
     df['similar_listings'] = df.apply(lambda row: pickle.dumps(filter_by_distance(row, df.iloc[top_n_similar[row.name]])), axis=1)
 
     # populate database
@@ -141,4 +142,10 @@ def precompute_and_populate(
 
 
 if __name__ == '__main__':
-    precompute_and_populate(device='cuda:0', batch_size=400)
+    import project_config as pc
+    
+    if not path.exists(pc.DATABASE_PATH):
+        device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+        precompute_and_make_db(device=device, batch_size=400 if device == 'cuda:0' else 64)
+    else:
+        print('Database already exists. Delete the database and try again if necessary.')

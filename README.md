@@ -61,6 +61,7 @@ Project Organization
 --------
 
 
+
 `.env` & `project_config.py`
 ------------
 The `.env` & `project_config.py` files make it easier to reference paths to `data` and `artifacts` directories on different computes and different developer environments.
@@ -90,3 +91,9 @@ from src import project_config as pc
 project_config.ENV_VARS['CODE_DIR']
 project_config.BASE_DATA_DIR
 ```
+
+`Initial setup`
+------------
+1. Create a `.env` file under the `src` directory (see above)
+2. Install the required packages: `pip install -r requirements.txt`
+3. Populate the sqlite database with the data: `python src/data make_dataset.py`
