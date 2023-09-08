@@ -76,6 +76,7 @@ Please create a file called `.env` under the `src` directory, containing the fol
 CODE_DIR = '<absolute-path-to-the-project-directory>'
 DATA_DIR = '<absolute-path-to-the-data-directory>'
 ARTIFACTS_DIR = '<absolute-path-to-the-artifacts-directory>'
+API_PORT = <port-for-fast-api>
 ```
 
 ### `project_config.py`

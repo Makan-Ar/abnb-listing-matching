@@ -1,9 +1,11 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
 
+import json
 import pickle
 import project_config as pc
 from database.db import Database
+from data.utils import ListingItem
 from typing import Dict, Any, Hashable, List
 
 class Listing:
@@ -100,6 +102,18 @@ class Listing:
             return None
         
         return [Listing.__from_db_dict(row) for row in rows]
+
+    def to_listing_item(self) -> ListingItem:
+        """ converts the listing to a ListingItem
+
+        Returns:
+            ListingItem: ListingItem object
+        """
+        props = {}
+        props.update(self.properties)
+        props.pop('embedding')
+        props.pop('similar_listings')
+        return ListingItem(id=self.id, **props)
 
     def store(self, db: Database=None) -> None:
         """ stores in the db as a new record.

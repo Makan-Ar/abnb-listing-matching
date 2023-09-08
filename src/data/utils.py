@@ -5,6 +5,8 @@ from os import path
 import pandas as pd
 import urllib.request
 import project_config as pc
+from pydantic import BaseModel, AnyUrl
+from typing import Union
 
 
 NYC_LISTINGS_URL = 'http://data.insideairbnb.com/united-states/ny/new-york-city/2023-06-05/data/listings.csv.gz'
@@ -49,6 +51,24 @@ LISTING_TABLE_SCHEMA = ('''
     embedding BLOB,
     similar_listings BLOB
 ''')
+                        
+class ListingItem(BaseModel):
+    id: int
+    listing_url: AnyUrl
+    room_type: str
+    neighbourhood_group_cleansed: str
+    neighbourhood_cleansed: str
+    bedrooms: int
+    beds: Union[int, None] = None
+    bathrooms_text: Union[str, None] = None
+    accommodates: Union[int, None] = None
+    price: float
+    latitude: float
+    longitude: float
+    property_type: Union[str, None] = None
+    description: Union[str, None] = None
+    neighborhood_overview: Union[str, None] = None
+    host_about: Union[str, None] = None
 
 def load_listings(listing_url: str) -> pd.DataFrame:
     """ loads listings from a url and returns a dataframe with the relevant columns
