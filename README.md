@@ -37,6 +37,9 @@ Project Organization
             |
             ├── data               <- Scripts to download / generate, and manupulate / 
             |                          preprocess data
+            |
+            ├── web_service        <- FastAPI web service to serve the model 
+            |                          
             │ 
             └──  models             <- Scripts to define + train models and then use trained 
                                        models to make predictions                      
@@ -96,4 +99,9 @@ project_config.BASE_DATA_DIR
 ------------
 1. Create a `.env` file under the `src` directory (see above)
 2. Install the required packages: `pip install -r requirements.txt`
-3. Populate the sqlite database with the data: `python src/data make_dataset.py`
+3. Populate the sqlite database with the data: `python src/data/make_dataset.py`
+   -   This will create a sqlite database under the `data` directory. It may take several minutes to complete.
+4. Start the web service: `python src/web_service/api.py` or alternatively `uvicorn src.web_service.api:app --reload --port <API_PORT>`
+   -   This will start the web service on the port specified in the `.env` file. 
+   -   You can test the web service by going to `http://localhost:<API_PORT>/docs` in your browser. 
+   - Web service documentation is available: `http://localhost:<API_PORT>/redoc`

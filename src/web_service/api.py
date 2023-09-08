@@ -14,7 +14,6 @@ from fastapi import FastAPI, HTTPException, status, Path
 app = FastAPI()
 db = Database()
 
-
 @app.get("/listings/{listing_id}", status_code=status.HTTP_200_OK)
 async def get_listing(
     listing_id: Annotated[int, Path(title="The ID of the item to get", ge=1)]
