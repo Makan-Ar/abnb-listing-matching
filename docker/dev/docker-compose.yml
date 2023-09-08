@@ -10,10 +10,13 @@ services:
     tty: true        # docker run -t
     restart: always
     ports:
-      - "8288:8888"  # mapping host port 8088 to container port 8888 for jupyter
+      - "8288:8888"  # mapping host port 8288 to container port 8888 for jupyter
+      - "8388:8988"  # mapping host port 8388 to container port 8888 for fastapi
+
     network_mode: "bridge"
     expose: 
-        - "8888"  # exposing port 8888 of the container to the host
+        - "8888" 
+        - "8988"
     volumes:
         - "/home/makan/Documents/projects/abnb-listing-matching/abnb-listing-matching:/home/appuser/code"
         - "/home/makan/Documents/projects/abnb-listing-matching/data:/home/appuser/data"
