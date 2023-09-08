@@ -17,10 +17,7 @@ BASE_CODE_DIR = path.abspath(ENV_VARS['CODE_DIR'])
 # data dir
 BASE_DATA_DIR = path.abspath(ENV_VARS['DATA_DIR'])
 BASE_RAW_DATA_DIR = path.join(BASE_DATA_DIR, 'raw')
-BASE_INTERIM_DATA_DIR = path.join(BASE_DATA_DIR, 'interim')
-BASE_PROCESSED_DATA_DIR = path.join(BASE_DATA_DIR, 'processed')
-BASE_EXTERNAL_DATA_DIR = path.join(BASE_DATA_DIR, 'external')
-DATABASE_DIR = path.join(BASE_DATA_DIR, 'processed')
+DATABASE_PATH = path.join(BASE_DATA_DIR, 'airbnb.db')
 
 # artifact dirs
 BASE_ARTIFACTS_DIR = path.abspath(ENV_VARS['ARTIFACTS_DIR'])
